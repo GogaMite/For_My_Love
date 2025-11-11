@@ -1,280 +1,170 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>код от души.js</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
-  :root{
-    --bg:#050506;
-    --accent:#00ff99;
-    --muted:rgba(255,255,255,0.06);
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html,body{height:100%}
-  body{
-    background:radial-gradient(circle at 10% 10%, #071018 0%, var(--bg) 40%);
-    color:var(--accent);
-    font-family:'Fira Code',monospace;
-    overflow:hidden;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Код от души ❤️</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
+    :root {
+      --bg: #080509;
+      --accent: #ff4f8b;
+      --text: rgba(255,255,255,0.9);
+    }
+    * {box-sizing: border-box; margin:0; padding:0;}
+    html, body {
+      height: 100%;
+      font-family: 'Fira Code', monospace;
+      background: radial-gradient(circle at 10% 10%, #071018 0%, var(--bg) 40%);
+      color: var(--text);
+      overflow: hidden;
+    }
 
-  /* console area */
-  #consoleWrap{
-    position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:50;
-  }
-  #console{
-    max-width:900px; width:92%;
-    background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(255,255,255,0.02));
-    padding:36px; border-radius:12px; box-shadow:0 8px 40px rgba(0,0,0,0.6);
-    backdrop-filter: blur(6px);
-    min-height:220px;
-  }
-  pre{white-space:pre-wrap; font-size:16px; line-height:1.4; color:var(--accent); }
+    #consoleWrap {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: left;
+      padding: 20px;
+      z-index: 5;
+    }
 
-  /* ready button */
-  #readyBtn{
-    display:none; margin:18px auto 0; padding:10px 26px; border-radius:10px; border:none;
-    background:var(--accent); color:#050506; font-weight:600; cursor:pointer; font-family:'Fira Code';
-    box-shadow:0 6px 20px rgba(0,255,153,0.12); animation:btnPulse 1800ms ease-in-out infinite;
-  }
-  #readyBtn:hover{ transform:translateY(-3px) scale(1.03) }
-  @keyframes btnPulse{
-    0%{ box-shadow:0 6px 14px rgba(0,255,153,0.08) }
-    50%{ box-shadow:0 18px 40px rgba(0,255,153,0.14) }
-    100%{ box-shadow:0 6px 14px rgba(0,255,153,0.08) }
-  }
+    #console {
+      max-width: 900px;
+      width: 90%;
+      padding: 20px 30px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.25), rgba(255,255,255,0.05));
+      border-radius: 12px;
+      box-shadow: 0 0 25px rgba(255,79,139,0.3);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow: hidden;
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.1);
+      white-space: pre-line;
+    }
 
-  /* collage */
-  #collage{
-    position:fixed; inset:0; display:none; z-index:10; overflow:hidden;
-    background: radial-gradient(ellipse at center, rgba(10,10,10,0.6) 0%, #000 60%);
-  }
+    #readyBtn {
+      margin-top: 25px;
+      padding: 10px 25px;
+      font-size: 16px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      opacity: 0;
+      transform: scale(0.9);
+      transition: all 0.3s;
+    }
 
-  .photo{
-    position:absolute; width:220px; max-width:28vw; border-radius:10px;
-    box-shadow:0 10px 40px rgba(0,0,0,0.7);
-    transform-origin:center center;
-    transition: transform 350ms cubic-bezier(.2,.9,.3,1), box-shadow 200ms;
-    cursor:pointer;
-    will-change: transform, top, left;
-    user-select:none;
-    border: 3px solid rgba(255,255,255,0.02);
-    opacity:0;
-  }
+    #readyBtn.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
 
-  /* small float animation */
-  @keyframes floaty {
-    0% { transform: translateY(0) rotate(var(--rot)); }
-    50% { transform: translateY(-8px) rotate(calc(var(--rot) + 1deg)); }
-    100% { transform: translateY(0) rotate(var(--rot)); }
-  }
+    #photos {
+      display: none;
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: var(--bg);
+      animation: fadeIn 2s ease forwards;
+    }
 
-  .photo.show {
-    animation: floaty calc(6s + var(--rnd}s)) ease-in-out infinite;
-    opacity:1; transition: opacity 600ms ease, transform 350ms;
-    animation-name: floaty;
-    animation-duration: calc(6s + var(--rnd)s);
-    animation-timing-function: ease-in-out;
-    animation-iteration-count: infinite;
-  }
+    .photo {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
+      transform: rotate(calc(var(--r) * 1deg)) scale(1);
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      transition: transform 0.3s;
+    }
 
-  .photo:hover{
-    z-index:1000;
-    transform: scale(1.20) rotate(0deg) translateZ(20px);
-    box-shadow:0 30px 80px rgba(0,0,0,0.8);
-  }
+    .photo:hover {
+      transform: scale(1.2) rotate(0deg);
+      z-index: 100;
+    }
 
-  /* caption tooltip */
-  .caption {
-    position:absolute; left:50%; transform:translateX(-50%); bottom:-36px;
-    background:rgba(0,0,0,0.7); color:#fff; padding:6px 10px; border-radius:6px;
-    font-size:12px; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity 200ms;
-  }
-  .photo:hover + .caption{ opacity:1; }
-
-  /* small console footer */
-  #consoleFooter{
-    margin-top:12px; color:rgba(0,255,153,0.6); font-size:13px; text-align:center;
-  }
-
-  /* one-time "burst" appear */
-  .burst {
-    animation: popIn 700ms cubic-bezier(.2,.9,.3,1) forwards;
-    transform-origin:center center;
-  }
-  @keyframes popIn {
-    0%{ opacity:0; transform: scale(0.85) translateY(6px) }
-    60%{ opacity:1; transform: scale(1.03) translateY(-4px) }
-    100%{ opacity:1; transform: scale(1) translateY(0) }
-  }
-
-  /* responsiveness */
-  @media (max-width:700px){
-    .photo{ width:140px; max-width:40vw }
-    pre{ font-size:14px }
-    #console{ padding:20px }
-  }
-</style>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
 </head>
 <body>
-
-<div id="consoleWrap">
-  <div id="console">
-    <pre id="codeArea"></pre>
-    <div id="consoleFooter">нажми READY, когда будешь готов(а)</div>
-    <button id="readyBtn">[ READY ]</button>
+  <div id="consoleWrap">
+    <div id="console"></div>
+    <button id="readyBtn">Ready ❤️</button>
   </div>
-</div>
 
-<div id="collage" aria-hidden="true"></div>
+  <div id="photos"></div>
 
-<script>
-  // --- ТЕКСТ (персонализируй) ---
-const lines = [
-  '// инициализация переменных',
-  'let мысли = [];',
-  'let сердце = "занято";',
-  '',
-  '// обновляю состояние каждый день',
-  'function update() {',
-  '    мысли.push("о тебе");',
-  '    if (мысли.length > 100) console.log("да, я опять думаю о тебе :)");',
-  '}',
-  '',
-  '// бесконечный цикл — пока ты есть',
-  'while (true) {',
-  '    update();',
-  '}',
-  '',
-  '// компиляция завершена',
-  'console.log("всё сводится к одному — ты мне важна. Я люблю тебя зай❤️");'
-];
+  <audio id="bg-music" autoplay loop>
+    <source src="huliganka.mp3" type="audio/mpeg">
+  </audio>
 
+  <script>
+    const lines = [
+      '// инициализация переменных',
+      'let мысли = [];',
+      'let сердце = "занято";',
+      '',
+      '// обновляю состояние каждый день',
+      'function update() {',
+      '    мысли.push("о тебе");',
+      '    if (мысли.length > 100) console.log("да, я опять думаю о тебе :)");',
+      '}',
+      '',
+      '// бесконечный цикл — пока ты есть',
+      'while (true) {',
+      '    update();',
+      '}',
+      '',
+      '// компиляция завершена',
+      'console.log("всё сводится к одному — ты мне важна. Я люблю тебя зай❤️");'
+    ];
 
-  const codeArea = document.getElementById('codeArea');
-  const readyBtn = document.getElementById('readyBtn');
-  const collage = document.getElementById('collage');
-  let line=0, char=0;
+    let i = 0;
+    const consoleEl = document.getElementById('console');
+    const btn = document.getElementById('readyBtn');
+    const photos = document.getElementById('photos');
 
-  function typeWriter(){
-    if(line < lines.length){
-      const text = lines[line];
-      if(char < text.length){
-        codeArea.innerHTML += text[char++];
-        setTimeout(typeWriter, 36 + Math.random()*20);
+    function typeLine() {
+      if (i < lines.length) {
+        consoleEl.innerHTML += lines[i] + '\n';
+        i++;
+        setTimeout(typeLine, 300);
       } else {
-        codeArea.innerHTML += '\n';
-        line++; char=0;
-        setTimeout(typeWriter, 220);
+        btn.classList.add('visible');
       }
-    } else {
-      // blink cursor tail
-      codeArea.innerHTML += '\n';
-      setTimeout(()=> readyBtn.style.display='block', 700);
     }
-  }
-  typeWriter();
 
-  readyBtn.addEventListener('click', () => {
-    // hide console, show collage
-    document.getElementById('consoleWrap').style.display='none';
-    showCollage();
-  });
-
-  // === ФОТО — замени список на свои имена файлов в папке img/ ===
-  const photos = [
-    'img/1.jpg','img/2.jpg','img/3.jpg','img/4.jpg','img/5.jpg',
-    'img/6.jpg','img/7.jpg','img/8.jpg','img/9.jpg','img/10.jpg'
-    // можно 20-100 и т.д.
-  ];
-
-  function rand(min,max){ return Math.random()*(max-min)+min }
-
-  function showCollage(){
-    collage.style.display='block';
-    // small initial "flash" background shake
-    collage.classList.add('burst');
-
-    // preload images (optional)
-    photos.forEach((src,i)=>{
-      const img = new Image();
-      img.src = src;
+    btn.addEventListener('click', () => {
+      document.getElementById('consoleWrap').style.display = 'none';
+      photos.style.display = 'block';
+      spawnPhotos();
     });
 
-    // append images with random positions/rotation
-    photos.forEach((src,i) => {
-      const el = document.createElement('img');
-      el.className = 'photo';
-      el.src = src;
-      // random size variance
-      const scale = rand(0.85,1.15);
-      el.style.width = (220 * scale) + 'px';
-      // random position (avoid extreme overflow)
-      el.style.top = rand(5,78) + '%';
-      el.style.left = rand(4,82) + '%';
-      // random rotation stored in --rot
-      const rot = (rand(-30,30)).toFixed(2) + 'deg';
-      el.style.setProperty('--rot', rot);
-      // small random seed for animation duration
-      el.style.setProperty('--rnd', (Math.floor(rand(0,400))/100));
-      // apply rotation transform initially
-      el.style.transform = `rotate(${rot}) translateZ(0)`;
-      // delayed show for staggered appear
-      setTimeout(()=> {
-        el.classList.add('show');
-        el.classList.add('burst');
-      }, 120 + i*80);
-
-      // caption (set your own captions by data-caption attr)
-      const caption = document.createElement('div');
-      caption.className = 'caption';
-      caption.textContent = `момент ${i+1}`; // сюда можешь вставить подпись
-      // wrap to allow caption display (caption is sibling in DOM)
-      el.addEventListener('click', (e)=>{
-        // при клике открываем фото в полноэкран-подобной модалке (простейшая реализация)
-        openLightbox(src);
-      });
-
-      // show caption on hover via sibling selector (append after)
-      collage.appendChild(el);
-      collage.appendChild(caption);
-    });
-
-    // subtle ambient parallax on mouse move
-    window.addEventListener('mousemove', (e)=>{
-      const cx = window.innerWidth/2;
-      const cy = window.innerHeight/2;
-      const dx = (e.clientX - cx)/cx; // -1 .. 1
-      const dy = (e.clientY - cy)/cy;
-      const all = document.querySelectorAll('.photo');
-      all.forEach((p, idx) => {
-        const depth = (idx % 6)/6; // 0..~0.8
-        p.style.transform = `translate3d(${dx*30*depth}px, ${dy*20*depth}px, 0) rotate(${p.style.getPropertyValue('--rot')})`;
-      });
-    });
-  }
-
-  // simple lightbox
-  function openLightbox(src){
-    const overlay = document.createElement('div');
-    overlay.style.position='fixed'; overlay.style.inset=0; overlay.style.display='flex';
-    overlay.style.alignItems='center'; overlay.style.justifyContent='center';
-    overlay.style.background='rgba(0,0,0,0.9)'; overlay.style.zIndex=2000;
-    overlay.addEventListener('click', ()=> overlay.remove());
-    const img = document.createElement('img');
-    img.src=src; img.style.maxWidth='90%'; img.style.maxHeight='90%'; img.style.borderRadius='12px';
-    overlay.appendChild(img);
-    document.body.appendChild(overlay);
-  }
-
-  // small safety: if some photo fails to load, hide it
-  window.addEventListener('error', (e)=>{
-    if(e.target && e.target.tagName === 'IMG'){
-      e.target.style.display='none';
+    function spawnPhotos() {
+      const total = 30; // можешь менять количество фото
+      for (let i = 1; i <= total; i++) {
+        const img = document.createElement('img');
+        img.src = `photos/${i}.jpg`; // просто назови фотки 1.jpg, 2.jpg и т.д.
+        img.className = 'photo';
+        img.style.setProperty('--r', Math.random() * 40 - 20);
+        img.style.top = Math.random() * 80 + '%';
+        img.style.left = Math.random() * 80 + '%';
+        photos.appendChild(img);
+      }
     }
-  });
-</script>
+
+    typeLine();
+  </script>
 </body>
 </html>
