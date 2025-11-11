@@ -1,170 +1,278 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Код от души ❤️</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
-    :root {
-      --bg: #080509;
-      --accent: #ff4f8b;
-      --text: rgba(255,255,255,0.9);
-    }
-    * {box-sizing: border-box; margin:0; padding:0;}
-    html, body {
-      height: 100%;
-      font-family: 'Fira Code', monospace;
-      background: radial-gradient(circle at 10% 10%, #071018 0%, var(--bg) 40%);
-      color: var(--text);
-      overflow: hidden;
-    }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Код от души</title>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#07060a;
+    --glow1: rgba(255,118,162,0.12);
+    --glow2: rgba(163,94,255,0.12);
+    --accent: #ff7aa6;
+    --text: #dfffe8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family: 'Fira Code', monospace;
+    background: radial-gradient(circle at 30% 20%, rgba(255,182,193,0.06), transparent 10%),
+                radial-gradient(circle at 80% 80%, rgba(186,85,211,0.06), transparent 8%),
+                var(--bg1);
+    color:var(--text);
+    overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
 
-    #consoleWrap {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      text-align: left;
-      padding: 20px;
-      z-index: 5;
-    }
+  /* container for typing area */
+  #consoleWrap{
+    position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:50;
+    padding:24px;
+  }
 
-    #console {
-      max-width: 900px;
-      width: 90%;
-      padding: 20px 30px;
-      background: linear-gradient(180deg, rgba(0,0,0,0.25), rgba(255,255,255,0.05));
-      border-radius: 12px;
-      box-shadow: 0 0 25px rgba(255,79,139,0.3);
-      font-size: 16px;
-      line-height: 1.6;
-      overflow: hidden;
-      backdrop-filter: blur(6px);
-      border: 1px solid rgba(255,255,255,0.1);
-      white-space: pre-line;
-    }
+  #console{
+    width:min(980px,94%);
+    background: linear-gradient(180deg, rgba(0,0,0,0.26), rgba(255,255,255,0.02));
+    border-radius:14px;
+    padding:30px;
+    box-shadow:0 20px 60px rgba(120,40,120,0.12);
+    backdrop-filter: blur(6px) saturate(1.05);
+    border:1px solid rgba(255,255,255,0.04);
+    min-height:320px;
+    white-space:pre-wrap;
+    font-size:16px;
+    line-height:1.5;
+  }
 
-    #readyBtn {
-      margin-top: 25px;
-      padding: 10px 25px;
-      font-size: 16px;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      opacity: 0;
-      transform: scale(0.9);
-      transition: all 0.3s;
-    }
+  #readyBtn{
+    display:block;
+    margin:18px auto 0;
+    padding:10px 26px;
+    border-radius:10px;
+    border:none;
+    background:linear-gradient(90deg,var(--accent), #b36cff);
+    color:#0b0610;
+    font-weight:600;
+    cursor:pointer;
+    box-shadow:0 12px 40px rgba(180,110,220,0.12);
+    transform:translateY(6px);
+    opacity:0;
+    transition:transform .25s, opacity .25s;
+  }
+  #readyBtn.visible{ opacity:1; transform:translateY(0); }
 
-    #readyBtn.visible {
-      opacity: 1;
-      transform: scale(1);
-    }
+  /* photos layer */
+  #photosLayer{
+    position:fixed; inset:0; z-index:10; display:none; overflow:hidden;
+    background: radial-gradient(circle at center, rgba(5,0,10,0.15), rgba(0,0,0,0.5));
+    /* soft pink-purple glow overlay */
+    box-shadow: inset 0 0 120px rgba(255,160,200,0.06), inset 0 0 220px rgba(160,120,255,0.05);
+    backdrop-filter: blur(6px);
+  }
 
-    #photos {
-      display: none;
-      position: absolute;
-      inset: 0;
-      overflow: hidden;
-      background: var(--bg);
-      animation: fadeIn 2s ease forwards;
-    }
+  .photo{
+    position:absolute;
+    width:230px;
+    height:auto;
+    border-radius:10px;
+    object-fit:cover;
+    box-shadow: 0 18px 45px rgba(10,6,20,0.6);
+    transition: transform .35s cubic-bezier(.2,.9,.3,1), box-shadow .25s;
+    will-change: transform;
+    cursor:pointer;
+    border:3px solid rgba(255,255,255,0.02);
+    filter: drop-shadow(0 8px 20px rgba(150,40,120,0.08));
+  }
 
-    .photo {
-      position: absolute;
-      width: 200px;
-      height: 200px;
-      object-fit: cover;
-      transform: rotate(calc(var(--r) * 1deg)) scale(1);
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
-      transition: transform 0.3s;
-    }
+  .photo:hover{
+    transform: scale(1.18) rotate(0deg) translateZ(30px);
+    z-index:999;
+    box-shadow:0 40px 110px rgba(50,10,60,0.6);
+  }
 
-    .photo:hover {
-      transform: scale(1.2) rotate(0deg);
-      z-index: 100;
-    }
+  /* gentle glow behind everything (for romance) */
+  #ambientGlow{
+    position:fixed; inset:-10%; z-index:5; pointer-events:none;
+    background: radial-gradient(circle at 25% 20%, rgba(255,182,193,0.08), transparent 6%),
+                radial-gradient(circle at 80% 80%, rgba(186,85,211,0.07), transparent 6%);
+    mix-blend-mode: screen;
+    filter: blur(40px) saturate(1.05);
+  }
 
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-  </style>
+  /* small responsive tweaks */
+  @media (max-width:800px){
+    .photo{ width:150px }
+    #console{ min-height:220px; padding:20px; font-size:15px }
+  }
+</style>
 </head>
 <body>
+
+  <div id="ambientGlow"></div>
+
   <div id="consoleWrap">
-    <div id="console"></div>
-    <button id="readyBtn">Ready ❤️</button>
+    <div id="console" aria-live="polite"></div>
+    <button id="readyBtn" aria-hidden="true">[ READY ]</button>
   </div>
 
-  <div id="photos"></div>
+  <div id="photosLayer" aria-hidden="true"></div>
 
-  <audio id="bg-music" autoplay loop>
-    <source src="huliganka.mp3" type="audio/mpeg">
-  </audio>
+  <!-- audio (you already uploaded huliganka.mp3 to repo root) -->
+  <audio id="bgAudio" src="huliganka.mp3" loop preload="auto"></audio>
 
-  <script>
-    const lines = [
-      '// инициализация переменных',
-      'let мысли = [];',
-      'let сердце = "занято";',
-      '',
-      '// обновляю состояние каждый день',
-      'function update() {',
-      '    мысли.push("о тебе");',
-      '    if (мысли.length > 100) console.log("да, я опять думаю о тебе :)");',
-      '}',
-      '',
-      '// бесконечный цикл — пока ты есть',
-      'while (true) {',
-      '    update();',
-      '}',
-      '',
-      '// компиляция завершена',
-      'console.log("всё сводится к одному — ты мне важна. Я люблю тебя зай❤️");'
-    ];
+<script>
+  // === ТВОЙ текст — ровно как прислал ===
+  const lines = [
+'// инициализация переменных',
+'let мысли = [];',
+'let сердце = "занято";',
+'',
+'// обновляю состояние каждый день',
+'function update() {',
+'    мысли.push("о тебе");',
+'    if (мысли.length > 100) console.log("да, я опять думаю о тебе :)");',
+'}',
+'',
+'// бесконечный цикл — пока ты есть',
+'while (true) {',
+'    update();',
+'}',
+'',
+'// компиляция завершена',
+'console.log("всё сводится к одному — ты мне важна. Я люблю тебя зай❤️");'
+  ];
 
-    let i = 0;
-    const consoleEl = document.getElementById('console');
-    const btn = document.getElementById('readyBtn');
-    const photos = document.getElementById('photos');
+  const consoleEl = document.getElementById('console');
+  const readyBtn = document.getElementById('readyBtn');
+  const photosLayer = document.getElementById('photosLayer');
+  const audio = document.getElementById('bgAudio');
 
-    function typeLine() {
-      if (i < lines.length) {
-        consoleEl.innerHTML += lines[i] + '\n';
-        i++;
-        setTimeout(typeLine, 300);
+  // typewriter effect (line by line, char by char)
+  let li = 0, ci = 0;
+  function typeStep(){
+    if(li < lines.length){
+      const line = lines[li];
+      if(ci < line.length){
+        consoleEl.textContent += line.charAt(ci);
+        ci++;
+        // random-ish typing timing
+        setTimeout(typeStep, 24 + Math.random()*40);
       } else {
-        btn.classList.add('visible');
+        consoleEl.textContent += '\\n';
+        li++; ci = 0;
+        setTimeout(typeStep, 180);
       }
+    } else {
+      // finished typing
+      readyBtn.classList.add('visible');
+      readyBtn.setAttribute('aria-hidden','false');
+    }
+  }
+  typeStep();
+
+  // audio: don't autoplay on some mobile — provide control via click
+  let playing=false;
+  // attempt to play once user interacts with page
+  function tryPlayAudio(){
+    if(!playing){
+      audio.play().then(()=>{ playing=true; }).catch(()=>{ /* blocked until user interacts */ });
+    }
+  }
+  // if user clicks anywhere, try to start music
+  document.addEventListener('click', tryPlayAudio, {once:true});
+
+  // photos: 33 items, expects files in folder photos/photo1.jpg ... photo33.jpg
+  const TOTAL = 33;
+  function createPhotoEl(i){
+    const img = document.createElement('img');
+    img.className = 'photo';
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.src = `photos/photo${i}.jpg`;
+    // random placement
+    const top = Math.random() * 80 + 5; // 5%..85%
+    const left = Math.random() * 80 + 3; // 3%..83%
+    const rot = (Math.random()*40 - 20).toFixed(2);
+    const scale = 0.9 + Math.random()*0.5;
+    img.style.top = top + '%';
+    img.style.left = left + '%';
+    img.style.transform = `rotate(${rot}deg) scale(${scale})`;
+    // subtle floating animation via CSS transform changes on interval
+    const floatDur = 4000 + Math.random()*5000;
+    let phase = Math.random()*Math.PI*2;
+    let lastTick=performance.now();
+    function floatTick(now){
+      const dt = now - lastTick;
+      lastTick = now;
+      phase += dt/floatDur * 2*Math.PI;
+      const dy = Math.sin(phase) * 6; // +-6px vertical float
+      img.style.transform = `translateY(${dy}px) rotate(${rot}deg) scale(${scale})`;
+      requestAnimationFrame(floatTick);
+    }
+    requestAnimationFrame(floatTick);
+    // click to open lightbox
+    img.addEventListener('click', ()=> openLightbox(img.src));
+    return img;
+  }
+
+  readyBtn.addEventListener('click', ()=> {
+    // try play audio on explicit click
+    audio.play().catch(()=>{});
+    // hide console, show photos
+    document.getElementById('consoleWrap').style.display = 'none';
+    photosLayer.style.display = 'block';
+    photosLayer.setAttribute('aria-hidden','false');
+
+    // add soft background blur element
+    const bgBlur = document.createElement('div');
+    bgBlur.style.position = 'absolute';
+    bgBlur.style.inset = 0;
+    bgBlur.style.backdropFilter = 'blur(8px)';
+    bgBlur.style.pointerEvents = 'none';
+    photosLayer.appendChild(bgBlur);
+
+    // spawn photos
+    for(let i=1;i<=TOTAL;i++){
+      const el = createPhotoEl(i);
+      photosLayer.appendChild(el);
     }
 
-    btn.addEventListener('click', () => {
-      document.getElementById('consoleWrap').style.display = 'none';
-      photos.style.display = 'block';
-      spawnPhotos();
-    });
+    // small entrance animation: scale up photosLayer
+    photosLayer.style.opacity = '0';
+    photosLayer.style.transform = 'scale(0.98)';
+    setTimeout(()=>{ photosLayer.style.transition='opacity .8s, transform .8s'; photosLayer.style.opacity='1'; photosLayer.style.transform='scale(1)'; },40);
+  });
 
-    function spawnPhotos() {
-      const total = 30; // можешь менять количество фото
-      for (let i = 1; i <= total; i++) {
-        const img = document.createElement('img');
-        img.src = `photos/${i}.jpg`; // просто назови фотки 1.jpg, 2.jpg и т.д.
-        img.className = 'photo';
-        img.style.setProperty('--r', Math.random() * 40 - 20);
-        img.style.top = Math.random() * 80 + '%';
-        img.style.left = Math.random() * 80 + '%';
-        photos.appendChild(img);
-      }
+  // simple lightbox
+  function openLightbox(src){
+    const overlay = document.createElement('div');
+    overlay.style.position='fixed';
+    overlay.style.inset='0';
+    overlay.style.background='rgba(0,0,0,0.92)';
+    overlay.style.display='flex';
+    overlay.style.alignItems='center';
+    overlay.style.justifyContent='center';
+    overlay.style.zIndex=9999;
+    overlay.addEventListener('click', ()=> overlay.remove());
+    const im = document.createElement('img');
+    im.src = src;
+    im.style.maxWidth='92%';
+    im.style.maxHeight='92%';
+    im.style.borderRadius='12px';
+    im.style.boxShadow='0 40px 120px rgba(0,0,0,0.9)';
+    overlay.appendChild(im);
+    document.body.appendChild(overlay);
+  }
+
+  // small safety: if photo 404 hide element (prevents ugly broken images)
+  window.addEventListener('error', (e)=>{
+    if(e.target && e.target.tagName === 'IMG'){
+      e.target.style.display='none';
     }
+  });
+</script>
 
-    typeLine();
-  </script>
 </body>
 </html>
