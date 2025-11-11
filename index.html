@@ -14,35 +14,33 @@
   body {
     height: 100vh;
     overflow: hidden;
-    background: radial-gradient(circle at center, #e9b9ff 0%, #5f2c82 100%);
+    background: radial-gradient(circle at center, #d8a9f9 0%, #4b2a6b 100%);
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
     font-family: "JetBrains Mono", monospace;
     color: #fff;
+    animation: glow 15s infinite alternate ease-in-out;
   }
 
-  /* Мягкое пульсирующее свечение */
   @keyframes glow {
-    0% { background: radial-gradient(circle at center, #e9b9ff 0%, #5f2c82 100%); }
-    50% { background: radial-gradient(circle at center, #f7caff 0%, #7b3fb3 100%); }
-    100% { background: radial-gradient(circle at center, #e9b9ff 0%, #5f2c82 100%); }
+    0% { background: radial-gradient(circle at center, #d8a9f9 0%, #4b2a6b 100%); }
+    50% { background: radial-gradient(circle at center, #e4b9ff 0%, #5a2f7a 100%); }
+    100% { background: radial-gradient(circle at center, #d8a9f9 0%, #4b2a6b 100%); }
   }
-  body { animation: glow 12s infinite alternate; }
 
-  /* Слайдшоу */
   .slideshow img {
     position: absolute;
     top: 50%;
     left: 50%;
-    max-width: 90vw;
-    max-height: 90vh;
+    max-width: 88vw;
+    max-height: 88vh;
     transform: translate(-50%, -50%);
     border-radius: 25px;
-    box-shadow: 0 0 50px rgba(255, 150, 255, 0.35);
+    box-shadow: 0 0 40px rgba(200, 150, 255, 0.25);
     opacity: 0;
-    filter: blur(1px) brightness(1.08);
+    filter: blur(1px) brightness(1.05);
     object-fit: contain;
     animation: fade 132s infinite;
   }
@@ -55,24 +53,27 @@
     100% { opacity: 0; }
   }
 
-  /* Код-текст */
   .code-block {
     position: absolute;
     bottom: 5%;
     width: 90%;
     max-width: 700px;
-    text-align: left;
-    color: #fff;
-    font-size: 16px;
+    color: #f4eaff;
+    font-size: 15.5px;
     font-family: "JetBrains Mono", monospace;
     white-space: pre-line;
-    text-shadow: 0 0 12px rgba(255, 120, 255, 0.8);
-    background: rgba(0, 0, 0, 0.25);
+    background: rgba(20, 10, 30, 0.4);
     border-radius: 15px;
-    padding: 20px 25px;
-    backdrop-filter: blur(5px);
-    box-shadow: 0 0 20px rgba(255, 160, 255, 0.3);
+    padding: 18px 22px;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 0 25px rgba(200, 150, 255, 0.15);
+    border: 1px solid rgba(220, 180, 255, 0.15);
+    text-shadow: 0 0 4px rgba(180, 130, 255, 0.4);
     animation: fadeInText 2s ease-in-out 2s both;
+  }
+
+  .code-block span {
+    color: #bda0ff;
   }
 
   @keyframes fadeInText {
@@ -80,13 +81,12 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* Аудио */
   audio {
     position: fixed;
     bottom: 20px;
     left: 20px;
     width: 230px;
-    filter: drop-shadow(0 0 10px rgba(255, 160, 255, 0.7));
+    filter: drop-shadow(0 0 8px rgba(200, 150, 255, 0.5));
   }
 </style>
 </head>
@@ -95,41 +95,17 @@
 <div class="slideshow" id="slideshow"></div>
 
 <div class="code-block">
-<span style="color:#9d7aff">// инициализация переменных</span><br>
+<span>// инициализация переменных</span><br>
 let мысли = [];<br>
 let сердце = "занято";<br><br>
 
-<span style="color:#9d7aff">// обновляю состояние каждый день</span><br>
+<span>// обновляю состояние каждый день</span><br>
 function update() {<br>
 &nbsp;&nbsp;&nbsp;&nbsp;мысли.push("о тебе");<br>
 &nbsp;&nbsp;&nbsp;&nbsp;if (мысли.length > 100) console.log("да, я опять думаю о тебе :)");<br>
 }<br><br>
 
-<span style="color:#9d7aff">// бесконечный цикл — пока ты есть</span><br>
+<span>// бесконечный цикл — пока ты есть</span><br>
 while (true) {<br>
 &nbsp;&nbsp;&nbsp;&nbsp;update();<br>
-}<br><br>
-
-<span style="color:#9d7aff">// компиляция завершена</span><br>
-console.log("всё сводится к одному — ты мне важна. я люблю тебя, зай ❤️");
-</div>
-
-<audio controls autoplay loop>
-  <source src="huliganka.mp3" type="audio/mpeg">
-</audio>
-
-<script>
-  const container = document.getElementById('slideshow');
-  const totalPhotos = 33; // количество фоток
-  const durationPerPhoto = 4; // секунд между появлением
-
-  for (let i = 1; i <= totalPhotos; i++) {
-    const img = document.createElement('img');
-    img.src = `${i}.jpg`;
-    img.style.animationDelay = `${i * durationPerPhoto}s`;
-    container.appendChild(img);
-  }
-</script>
-
-</body>
-</html>
+}<b
