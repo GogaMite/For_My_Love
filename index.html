@@ -1,111 +1,143 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>для тебя 💜</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>для тебя ❤️</title>
 <style>
-  * {
+  body {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+    background: radial-gradient(circle at center, #1a001f 0%, #0d0010 100%);
+    color: #ffbaf7;
+    font-family: 'Courier New', monospace;
+    overflow: hidden;
   }
 
-  body {
+  .container {
+    position: relative;
+    width: 100%;
     height: 100vh;
-    overflow: hidden;
-    background: radial-gradient(circle at center, #d8a9f9 0%, #4b2a6b 100%);
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    position: relative;
-    font-family: "JetBrains Mono", monospace;
-    color: #fff;
-    animation: glow 15s infinite alternate ease-in-out;
+    text-align: left;
   }
 
-  @keyframes glow {
-    0% { background: radial-gradient(circle at center, #d8a9f9 0%, #4b2a6b 100%); }
-    50% { background: radial-gradient(circle at center, #e4b9ff 0%, #5a2f7a 100%); }
-    100% { background: radial-gradient(circle at center, #d8a9f9 0%, #4b2a6b 100%); }
+  pre {
+    white-space: pre-wrap;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(255, 150, 255, 0.2);
+    backdrop-filter: blur(10px);
   }
 
-  .slideshow img {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    max-width: 88vw;
-    max-height: 88vh;
-    transform: translate(-50%, -50%);
-    border-radius: 25px;
-    box-shadow: 0 0 40px rgba(200, 150, 255, 0.25);
-    opacity: 0;
-    filter: blur(1px) brightness(1.05);
-    object-fit: contain;
-    animation: fade 132s infinite;
+  .btn {
+    margin-top: 30px;
+    background: rgba(255, 100, 255, 0.2);
+    color: #ffd6fa;
+    padding: 12px 28px;
+    border: 1px solid #ffbaf7;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
   }
 
-  @keyframes fade {
-    0% { opacity: 0; }
-    3% { opacity: 1; }
-    30% { opacity: 1; }
-    33% { opacity: 0; }
-    100% { opacity: 0; }
+  .btn:hover {
+    background: rgba(255, 100, 255, 0.4);
+    box-shadow: 0 0 10px rgba(255, 150, 255, 0.5);
   }
 
-  .code-block {
-    position: absolute;
-    bottom: 5%;
-    width: 90%;
-    max-width: 700px;
-    color: #f4eaff;
-    font-size: 15.5px;
-    font-family: "JetBrains Mono", monospace;
-    white-space: pre-line;
-    background: rgba(20, 10, 30, 0.4);
-    border-radius: 15px;
-    padding: 18px 22px;
-    backdrop-filter: blur(6px);
-    box-shadow: 0 0 25px rgba(200, 150, 255, 0.15);
-    border: 1px solid rgba(220, 180, 255, 0.15);
-    text-shadow: 0 0 4px rgba(180, 130, 255, 0.4);
-    animation: fadeInText 2s ease-in-out 2s both;
+  .gallery {
+    display: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
+    min-height: 100vh;
+    overflow-y: scroll;
   }
 
-  .code-block span {
-    color: #bda0ff;
+  .gallery img {
+    width: calc(20% - 10px);
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(255, 100, 255, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
 
-  @keyframes fadeInText {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+  .gallery img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(255, 150, 255, 0.6);
   }
 
   audio {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    width: 230px;
-    filter: drop-shadow(0 0 8px rgba(200, 150, 255, 0.5));
+    display: none;
   }
 </style>
 </head>
 <body>
+  <div class="container" id="main">
+    <pre id="text"></pre>
+    <button class="btn" onclick="showGallery()">Ready</button>
+  </div>
 
-<div class="slideshow" id="slideshow"></div>
+  <div class="gallery" id="gallery"></div>
 
-<div class="code-block">
-<span>// инициализация переменных</span><br>
-let мысли = [];<br>
-let сердце = "занято";<br><br>
+  <audio autoplay loop>
+    <source src="music.mp3" type="audio/mpeg" />
+  </audio>
 
-<span>// обновляю состояние каждый день</span><br>
-function update() {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;мысли.push("о тебе");<br>
-&nbsp;&nbsp;&nbsp;&nbsp;if (мысли.length > 100) console.log("да, я опять думаю о тебе :)");<br>
-}<br><br>
+  <script>
+    const lines = [
+      '// инициализация переменных',
+      'let мысли = [];',
+      'let сердце = "занято";',
+      '',
+      '// обновляю состояние каждый день',
+      'function update() {',
+      '    мысли.push("о тебе");',
+      '    if (мысли.length > 100) console.log("да, я опять думаю о тебе :)");',
+      '}',
+      '',
+      '// бесконечный цикл — пока ты есть',
+      'while (true) {',
+      '    update();',
+      '}',
+      '',
+      '// компиляция завершена',
+      'console.log("всё сводится к одному — ты мне важна. Я люблю тебя зай❤️");'
+    ];
 
-<span>// бесконечный цикл — пока ты есть</span><br>
-while (true) {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;update();<br>
-}<b
+    let index = 0;
+    const textEl = document.getElementById("text");
+
+    function typeLine() {
+      if (index < lines.length) {
+        textEl.innerHTML += lines[index] + "\n";
+        index++;
+        setTimeout(typeLine, 300);
+      }
+    }
+    typeLine();
+
+    function showGallery() {
+      document.getElementById("main").style.display = "none";
+      const gallery = document.getElementById("gallery");
+      gallery.style.display = "flex";
+
+      for (let i = 1; i <= 33; i++) {
+        const img = document.createElement("img");
+        img.src = `images/${i}.jpg`;
+        gallery.appendChild(img);
+      }
+    }
+  </script>
+</body>
+</html>
