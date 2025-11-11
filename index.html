@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>для тебя ❤️</title>
 <style>
   body {
     margin: 0;
     padding: 0;
-    background: radial-gradient(circle at center, #1a001f 0%, #0d0010 100%);
-    color: #ffbaf7;
+    background-color: #0a0f0a;
+    color: #00ff99;
     font-family: 'Courier New', monospace;
     overflow: hidden;
   }
@@ -29,19 +29,20 @@
     white-space: pre-wrap;
     font-size: 1.1rem;
     line-height: 1.6;
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(0, 0, 0, 0.4);
     border-radius: 10px;
     padding: 20px;
-    box-shadow: 0 0 20px rgba(255, 150, 255, 0.2);
+    box-shadow: 0 0 20px rgba(0, 255, 100, 0.2);
     backdrop-filter: blur(10px);
+    color: #00ff99;
   }
 
   .btn {
     margin-top: 30px;
-    background: rgba(255, 100, 255, 0.2);
-    color: #ffd6fa;
+    background: rgba(0, 255, 100, 0.1);
+    color: #00ff99;
     padding: 12px 28px;
-    border: 1px solid #ffbaf7;
+    border: 1px solid #00ff99;
     border-radius: 12px;
     font-size: 1.2rem;
     cursor: pointer;
@@ -49,32 +50,37 @@
   }
 
   .btn:hover {
-    background: rgba(255, 100, 255, 0.4);
-    box-shadow: 0 0 10px rgba(255, 150, 255, 0.5);
+    background: rgba(0, 255, 100, 0.3);
+    box-shadow: 0 0 15px rgba(0, 255, 100, 0.4);
   }
 
   .gallery {
     display: none;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(15px);
-    min-height: 100vh;
-    overflow-y: scroll;
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #0a0f0a;
   }
 
   .gallery img {
-    width: calc(20% - 10px);
-    border-radius: 12px;
-    box-shadow: 0 0 15px rgba(255, 100, 255, 0.3);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: absolute;
+    width: 200px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 255, 100, 0.3);
+    transform: rotate(calc(var(--r) * 1deg)) scale(1);
+    opacity: 0;
+    transition: opacity 1s ease, transform 0.3s ease;
+  }
+
+  .gallery img.show {
+    opacity: 1;
   }
 
   .gallery img:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 25px rgba(255, 150, 255, 0.6);
+    transform: scale(1.1) rotate(calc(var(--r) * 1deg));
+    z-index: 10;
   }
 
   audio {
@@ -91,7 +97,7 @@
   <div class="gallery" id="gallery"></div>
 
   <audio autoplay loop>
-    <source src="music.mp3" type="audio/mpeg" />
+    <source src="music.mp3" type="audio/mpeg">
   </audio>
 
   <script>
@@ -112,7 +118,7 @@
       '}',
       '',
       '// компиляция завершена',
-      'console.log("всё сводится к одному — ты мне важна. Я люблю тебя зай❤️");'
+      'console.log("всё сводится к одному — ты мне важна. Я люблю тебя ❤️");'
     ];
 
     let index = 0;
@@ -130,12 +136,17 @@
     function showGallery() {
       document.getElementById("main").style.display = "none";
       const gallery = document.getElementById("gallery");
-      gallery.style.display = "flex";
+      gallery.style.display = "block";
 
       for (let i = 1; i <= 33; i++) {
         const img = document.createElement("img");
-        img.src = `images/${i}.jpg`;
+        img.src = `${i}.jpg`;
+        img.style.top = Math.random() * 80 + '%';
+        img.style.left = Math.random() * 80 + '%';
+        img.style.setProperty('--r', (Math.random() * 40 - 20).toFixed(2));
         gallery.appendChild(img);
+
+        setTimeout(() => img.classList.add('show'), i * 100);
       }
     }
   </script>
